@@ -1,0 +1,68 @@
+from flask import Flask, render_template, request
+import os
+import fitz  # PyMuPDF
+import docx
+
+app = Flask(__name__)
+UPLOAD_FOLDER = 'uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Function to extract text from resume files
+def extract_text(file_path):
+    if file_path.endswith('.pdf'):
+        text = ""
+        with fitz.open(file_path) as doc:
+            for page in doc:
+                text += page.get_text()
+        return text
+
+    elif file_path.endswith('.docx'):
+        doc = docx.Document(file_path)
+        return "\n".join([para.text for para in doc.paragraphs])
+
+    else:
+        return "Unsupported file format."
+
+# Function to generate suggestions for resume improvement
+def generate_suggestions(resume_text):
+    suggestions = []
+    
+    # Check if certain key sections are missing in the resume
+    if "skills" not in resume_text.lower():
+        suggestions.append("Consider adding a 'Skills' section to highlight your technical and soft skills.")
+    
+    if "experience" not in resume_text.lower():
+        suggestions.append("Make sure to include a section for your 'Work Experience' or 'Internships'.")
+    
+    if "education" not in resume_text.lower():
+        suggestions.append("Include your 'Education' section to showcase your academic qualifications.")
+    
+    if len(resume_text.split()) < 300:
+        suggestions.append("Your resume seems quite short. Consider elaborating on your skills and experiences.")
+    
+    # Add more specific suggestions based on the resume text, such as keywords, grammar, or layout improvements.
+    # Example: Check for unstructured bullet points, passive voice, etc.
+
+    if not any(word in resume_text.lower() for word in ['achievement', 'accomplishment']):
+        suggestions.append("Include achievements or specific accomplishments to make your resume stand out.")
+    
+    return suggestions
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        resume = request.files.get('resume')
+        if resume:
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], resume.filename)
+            resume.save(filepath)
+            text = extract_text(filepath)
+            suggestions = generate_suggestions(text)  # Get suggestions based on the extracted text
+            # Render template and send extracted text and suggestions to be displayed
+            return render_template('index.html', resume_text=text[:1000], suggestions=suggestions)
+        else:
+            return "❌ No file uploaded!"
+    return render_template('index.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
