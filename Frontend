@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Resume Checker</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    header {
+      background: #0a3d62;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 5px solid #074173;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #0a3d62;
+      text-align: center;
+    }
+
+    p {
+      font-size: 16px;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .resume-preview {
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-x: auto;
+    }
+
+    .suggestions {
+      background-color: #eaf1f7;
+      border: 1px solid #d1e3ef;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    .suggestions ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .suggestions li {
+      background-color: #f1f8fc;
+      margin: 10px 0;
+      padding: 12px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: #0a3d62;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      text-align: center;
+      margin: 20px 0;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #074173;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      background: #ddd;
+      margin-top: 40px;
+      font-size: 14px;
+    }
+
+    footer a {
+      color: #0a3d62;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AI Resume Checker</h1>
+    <p>Improve your resume with intelligent feedback</p>
+  </header>
+
+  <div class="container">
+    <h2>Upload Your Resume</h2>
+    <p>Our AI will analyse your resume and provide suggestions for improvement.</p>
+    <form action="/" method="POST" enctype="multipart/form-data">
+      <input type="file" name="resume" accept=".pdf,.doc,.docx" required />
+      <input type="submit" value="Check Resume" class="btn" />
+    </form>
+
+    {% if resume_text %}
+      <h2>Resume Content (Preview)</h2>
+      <div class="resume-preview">
+        {{ resume_text }}
+      </div>
+    {% endif %}
+
+    {% if suggestions %}
+      <div class="suggestions">
+        <h3>Suggestions for Improvement</h3>
+        <ul>
+          {% for suggestion in suggestions %}
+            <li>{{ suggestion }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  </div>
+
+  <footer>
+    &copy; 2025 AI Resume Checker. All rights reserved. | <a href="mailto:support@resumechecker.com">Contact Us</a>
+  </footer>
+</body>
+</html>
